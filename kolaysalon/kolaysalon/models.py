@@ -1,12 +1,13 @@
 from sqlalchemy import Column, ForeignKey,VARCHAR,INTEGER,String
 
-from sqlalchemy.dialects.mssql import  TEXT,TINYINT,VARCHAR,INTEGER
+from sqlalchemy.dialects.mssql import TEXT,TINYINT,VARCHAR,INTEGER
+from sqlalchemy.dialects.mysql import MEDIUMBLOB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.interfaces import  MapperExtension
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,DateTime
 import settings
-
+import datetime
 from sqlalchemy.orm import relationship, backref
 
 
@@ -32,6 +33,10 @@ def db_engine_connect():
 def create_tables(engine):
     DeclarativeBase.metadata.create_all(engine)
 
+def drop_tables(engine):
+    DeclarativeBase.metadata.drop_all(engine)
+
+
 
 
 class Business(DeclarativeBase):
@@ -49,7 +54,7 @@ class Business(DeclarativeBase):
     shop_name_value = Column(VARCHAR(255), primary_key=True)
     kolayrandevu_url = Column(VARCHAR(255))
     name = Column(VARCHAR(255))
-    logo = Column(VARCHAR(255))
+    logo = Column(MEDIUMBLOB)
     province = Column(VARCHAR(255))
     district = Column(VARCHAR(255))
     full_address = Column(VARCHAR(255))
@@ -79,8 +84,22 @@ class Review(DeclarativeBase):
                         uselist=True,
                         cascade='delete,all'))
 
+
+class Category(DeclarativeBase):
+    """ Category Entity class"""
+
+    __tablename__ = 'categories'
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8'
+    }
+
+    id = Column(INTEGER, primary_key=True)
+    name = Column(VARCHAR(255))
+
+
 class Service(DeclarativeBase):
-    """Review Entity Class"""
+    """ Servie Entity Class"""
     __tablename__ = 'services'
     __table_args__ = {
         'mysql_engine': 'InnoDB',
@@ -88,14 +107,56 @@ class Service(DeclarativeBase):
     }
 
     id = Column(INTEGER, primary_key=True)
-    services = Column(TEXT)
-    gender = Column(VARCHAR(255))
-    business_id = Column(INTEGER, ForeignKey('businesses.id'))
-    business = relationship(
-        Business,
-        backref=backref('service',
+    name = Column(VARCHAR(255))
+
+    category_id = Column(INTEGER, ForeignKey('categories.id'))
+    # category_id = 1
+
+    category = relationship(
+        Category,
+        backref=backref('category',
                         uselist=True,
                         cascade='delete,all'))
+
+
+
+class BusinessServicesRel(DeclarativeBase):
+    """Service Entity Class"""
+    __tablename__ = 'business_services_rels'
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8'
+    }
+
+
+
+    id = Column(INTEGER, primary_key=True)
+    gender = Column(VARCHAR(255))
+    business_id = Column(INTEGER, ForeignKey('businesses.id'))
+    service_id = Column(INTEGER, ForeignKey('services.id'))
+    price = Column(VARCHAR(255))
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    modified_at = Column(DateTime, onupdate=datetime.datetime.now)
+
+    business = relationship(
+        Business,
+        backref=backref('business_rel',
+                        uselist=True,
+                        cascade='delete,all'))
+    service = relationship(
+        Service,
+        backref=backref('service_rel',
+                        uselist=True,
+                        cascade='delete,all'))
+
+
+
+
+
+
+
+
+
 
 
 

@@ -16,5 +16,6 @@ class KolaysalonItem(scrapy.Item):
 
     image_urls = scrapy.Field()
     images = scrapy.Field()
+    image_local_path = scrapy.Field()
 
 

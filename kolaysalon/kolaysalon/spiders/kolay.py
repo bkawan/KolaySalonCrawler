@@ -13,8 +13,9 @@ class KolaySpider(scrapy.Spider):
     name = "kolay"
     allowed_domains = ["kolayrandevu.com"]
     start_urls = (
-        # 'https://www.kolayrandevu.com/',
-        'https://www.kolayrandevu.com/isletme/isa-kurt-hair-artist',
+        'https://www.kolayrandevu.com/',
+        # 'https://www.kolayrandevu.com/isletme/isa-kurt-hair-artist',
+        # 'https://www.kolayrandevu.com/isletme/mehmet-tatli-orjin-maslak',
     )
 
     def __init__(self):
@@ -30,38 +31,23 @@ class KolaySpider(scrapy.Spider):
         """
         # inspect_response(response,self)
 
+
         shop_name_sel_list = response.xpath("//select[@name='mekan']/option")
-        shop_name_value = "dfs"
+        print (shop_name_sel_list)
+        shop_name_sel_list = shop_name_sel_list[1:2]
 
-        yield scrapy.Request(response.url, callback=self.parse_each_shop,
-                             dont_filter=True,
-                             meta={'shop_name_value': shop_name_value})
+        for shop in shop_name_sel_list:
+            shop_name_value = shop.xpath("./@value").extract_first().strip()
+            shop_name = shop.xpath("./text()").extract_first()
+            if shop_name_value:
+                group = re.findall(r'i-(.*)', shop_name_value)
+                if group:
+                    shop_name_value = group[0]
+                shop_link = "isletme/" + shop_name_value
 
-        # if False:
-        #
-        #     for shop in shop_name_sel_list:
-        #         shop_name_value = shop.xpath("./@value").extract_first().strip()
-        #         shop_name = shop.xpath("./text()").extract_first()
-        #         if shop_name_value:
-        #             group = re.findall(r'i-(.*)', shop_name_value)
-        #             if group:
-        #                 shop_name_value = group[0]
-        #             shop_link = "isletme/" + shop_name_value
-        #
-        #             yield scrapy.Request(response.urljoin(shop_link), callback=self.parse_each_shop,
-        #                                  dont_filter=True,
-        #                                  meta={'shop_name_value': shop_name_value})
-
-
-
-
-
-        #
-        # response.xpath("//select[@name='mekan']/option")
-        #
-        # response.xpath("//select[@name='mekan']/option/@value").extract()
-
-        # pass
+                yield scrapy.Request(response.urljoin(shop_link), callback=self.parse_each_shop,
+                                     dont_filter=True,
+                                     meta={'shop_name_value': shop_name_value})
 
 
     def parse_each_shop(self,response):
@@ -126,7 +112,7 @@ class KolaySpider(scrapy.Spider):
                 about = text.strip('Hakk\xc4\xb1nda').strip()
 
 
-        logo = response.xpath("//img[@itemprop='logo']/@src").extract()
+        logo_url = response.xpath("//img[@itemprop='logo']/@src").extract_first()
 
         thumbnail_photos_link_list = response.xpath("//img[@class='sp-thumbnail']/@src").extract()
         photos_link_list = [str(x.replace('kr-s0','kr-s2')) for x in thumbnail_photos_link_list]
@@ -138,7 +124,7 @@ class KolaySpider(scrapy.Spider):
         business_dict = {
             "kolayrandevu_url": response.url,
             "name": shop_name,
-            "logo": "logo",
+            "logo": logo_url,
             # 'category': 'category',
             "province": address_region,
             "district": address_locality,
@@ -149,7 +135,7 @@ class KolaySpider(scrapy.Spider):
             "professionals": professionals,
             # 'franchise_branches': 'franchise_branches',
             "about": about,
-            "photos": "photos",
+            "photos": photos_link_list,
             "shop_name_value": shop_name_value
 
 
@@ -207,12 +193,6 @@ class KolaySpider(scrapy.Spider):
 
             self.service_dict = services_dict
 
-
-
-        services_dict = {
-            'gender': services_dict.keys(),
-            'services': services_dict.values()
-        }
         item["kolay"] = {
             "business": business_dict,
             "reviews": reviews_dict,

@@ -64,8 +64,8 @@ NEWSPIDER_MODULE = 'kolaysalon.spiders'
 ITEM_PIPELINES = {
    'kolaysalon.pipelines.KolaysalonPipeline': 300,
    'kolaysalon.pipelines.MysqlPipeline': 300,
-   # 'kolaysalon.pipelines.MyImagesPipeline': 1,
-    'scrapy.pipelines.images.ImagesPipeline': 100,
+   'kolaysalon.pipelines.MyImagesPipeline': 1,
+    # 'scrapy.pipelines.images.ImagesPipeline': 100,
    # 'scrapy.pipelines.files.FilesPipeline' :1
 }
 
@@ -88,7 +88,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES=[]
 #HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-IMAGE_STORE = '/Users/BIKESHKAWAN/Development/phunka/GitHub/KolaySalonCrawler/kolaysalon/images'
+IMAGES_STORE = 'images/'
 # FILE_STORAGE = '/Users/BIKESHKAWAN/Development/phunka/GitHub/KolaySalonCrawler/kolaysalon/'
 
 
