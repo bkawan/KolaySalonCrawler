@@ -150,40 +150,28 @@ class MysqlPipeline(object):
             category_item = service_dict['category']
             business_service_rel_item = service_dict['business_service_rel']
 
-            category = self.get_entity_dict_values(entity=Category, item=category_item)
 
+
+            category = self.get_entity_dict_values(entity=Category, item=category_item)
             service = self.get_entity_dict_values(entity=Service, item=service_item)
             business_service_rel = self.get_entity_dict_values(entity=BusinessServicesRel, item= business_service_rel_item)
 
-
-            category_entity = Category(**category)
-            session.add(category_entity)
-
-
-            #
-            # try:
-            #
-            #     category_entity = session.query(Category).filter_by(name=service_dict['category']['name']).first()
-            #     if category_entity:
-            #         print("**" * 50)
-            #         print category_entity
-            #         print (category_entity.name)
-            #         print("**" * 50)
-            #
-            # except IntegrityError:
-            #
-            #     category_entity = Category(**category)
-            #
-            #     print("**" * 50)
-            #
-            #     print(category_entity)
-            #     print (category_entity.name)
+            category_entity_exists = session.query(Category).filter_by(name=category['name']).first()
+            service_entity_exists = session.query(Service).filter_by(name=service['name']).first()
 
 
 
-            service_entity = Service(category=category_entity, **service)
-            session.add(service_entity)
-            # session.add(Service(category=category_entity, **service))
+            if category_entity_exists:
+
+                service_entity = Service(category=category_entity_exists, **service)
+                session.add(service_entity)
+
+            else:
+                category_entity = Category(**category)
+                service_entity = Service(category=category_entity, **service)
+                session.add(category_entity)
+                session.add(service_entity)
+
             session.add(BusinessServicesRel(service=service_entity,business=business_entity,**business_service_rel))
 
         session.commit()
