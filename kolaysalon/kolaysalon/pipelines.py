@@ -123,11 +123,15 @@ class MysqlPipeline(object):
 
     def insert(self, item):
         business_item = item['kolay']['business']
-        logo_url = item['kolay']['business']['logo']
 
-        opener = urllib2.build_opener()
-        image = opener.open(logo_url)
-        logo = image.read()
+        try:
+            logo_url = item['kolay']['business']['logo']
+            opener = urllib2.build_opener()
+            image = opener.open(logo_url)
+            logo = image.read()
+        except:
+            logo = None
+
 
         review_item = item['kolay']['reviews']
         all_services_item = item['kolay']['services']
@@ -140,7 +144,11 @@ class MysqlPipeline(object):
         business = self.get_entity_dict_values(entity=Business, item=business_item)
         review = self.get_entity_dict_values(entity=Review, item=review_item)
 
-        business_entity = Business(logo=logo,**business)
+        if logo:
+            business_entity = Business(logo=logo, **business)
+        else:
+            business_entity = Business(**business)
+
         session.add(business_entity)
         session.add(Review(business=business_entity, **review))
 
@@ -161,7 +169,6 @@ class MysqlPipeline(object):
 
 
             if category_entity_exists:
-
                 service_entity = Service(category=category_entity_exists, **service)
                 session.add(service_entity)
                 session.add(

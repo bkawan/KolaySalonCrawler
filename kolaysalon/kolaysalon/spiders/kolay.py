@@ -34,7 +34,7 @@ class KolaySpider(scrapy.Spider):
 
         shop_name_sel_list = response.xpath("//select[@name='mekan']/option")
         print (shop_name_sel_list)
-        shop_name_sel_list = shop_name_sel_list[1:2]
+        shop_name_sel_list = shop_name_sel_list[1:3]
 
         for shop in shop_name_sel_list:
             shop_name_value = shop.xpath("./@value").extract_first().strip()
@@ -50,25 +50,56 @@ class KolaySpider(scrapy.Spider):
                                      meta={'shop_name_value': shop_name_value})
 
 
+
+        # shop_link = 'https://www.kolayrandevu.com/isletme/makyajhane'
+        # shop_link = 'https://www.kolayrandevu.com/isletme/zerafetsac'
+        # yield scrapy.Request(response.urljoin(shop_link), callback=self.parse_each_shop,
+        #                      dont_filter=True,
+        #                      meta={'shop_name_value': "s"})
+
+
     def parse_each_shop(self,response):
         # inspect_response(response, self)
         item = KolaysalonItem()
         shop_name_value = response.meta['shop_name_value']
 
-        shop_name = response.xpath("//a[@itemprop='url']").xpath("string()").extract_first().strip()
+        try:
+
+            shop_name = response.xpath("//a[@itemprop='url']").xpath("string()").extract_first().strip()
+        except:
+            shop_name = shop_name_value
 
         shop_address_sel = response.xpath("//span[@itemprop='address']")
 
-        street_address = shop_address_sel.xpath(".//span[@itemprop='streetAddress']/text()").extract_first().strip()
-        address_locality = shop_address_sel.xpath(".//span[@itemprop='addressLocality']/text()").extract_first().strip()
-        address_region = shop_address_sel.xpath(".//span[@itemprop='addressRegion']/text()").extract_first().strip()
+        try:
+            street_address = shop_address_sel.xpath(".//span[@itemprop='streetAddress']/text()").extract_first().strip()
+        except:
+            street_address =" "
+
+        try:
+            address_locality = shop_address_sel.xpath(".//span[@itemprop='addressLocality']/text()").extract_first().strip()
+        except:
+            address_locality = " "
+
+        try:
+            address_region = shop_address_sel.xpath(".//span[@itemprop='addressRegion']/text()").extract_first().strip()
+        except:
+            address_region = " "
         full_address = "{}; {}; {}".format(street_address, address_locality, address_region)
 
-        lng = response.xpath("//meta[@itemprop='longitude']/@content").extract_first()
-        lat = response.xpath("//meta[@itemprop='latitude']/@content").extract_first()
+        try:
+            lng = response.xpath("//meta[@itemprop='longitude']/@content").extract_first()
+            lng = float(lng)
+        except:
+            lng = " "
+        try:
+            lat = response.xpath("//meta[@itemprop='latitude']/@content").extract_first()
+            lat = float(lat)
+        except:
+            lat = " "
         geo_position_dict = {
-            "longitude": float(lng),
-            "latitude": float(lat)
+            "longitude": lng,
+            "latitude": lat
         }
 
         # response.xpath("//table[@class='table table-striped']/tbody/tr/td").extract()
@@ -102,20 +133,37 @@ class KolaySpider(scrapy.Spider):
             
         }
 
+
         professionals_list = response.xpath("//p[@class='personel-title']/text()").extract()
-        professionals = "; ".join(professionals_list)
+        try:
+            professionals = "; ".join(professionals_list)
+        except:
+            professionals = " "
         div_sel_list = response.xpath("//div[@class='row']")
         about = ""
-        for div in div_sel_list:
-            text = div.xpath("string()").extract_first().strip().strip()
-            if text.startswith('Hakk\xc4\xb1nda'):
-                about = text.strip('Hakk\xc4\xb1nda').strip()
+        try:
+            for div in div_sel_list:
+                text = div.xpath("string()").extract_first().strip().strip()
+                if text.startswith('Hakk\xc4\xb1nda'):
+                    about = text.strip('Hakk\xc4\xb1nda').strip()
+        except:
+            pass
 
 
-        logo_url = response.xpath("//img[@itemprop='logo']/@src").extract_first()
+        # logo_url = response.xpath("//img[@itemprop='logo']/@src").extract_first()
+        try:
+            logo_url = response.xpath("//img[@itemprop='logo']/@src").extract_first()
+        except:
+            logo_url = " "
 
-        thumbnail_photos_link_list = response.xpath("//img[@class='sp-thumbnail']/@src").extract()
-        photos_link_list = [str(x.replace('kr-s0','kr-s2')) for x in thumbnail_photos_link_list]
+        try:
+
+            thumbnail_photos_link_list = response.xpath("//img[@class='sp-thumbnail']/@src").extract()
+            photos_link_list = [str(x.replace('kr-s0','kr-s2')) for x in thumbnail_photos_link_list]
+        except:
+            photos_link_list = " "
+
+
 
         item['image_urls'] = photos_link_list
 
@@ -145,12 +193,13 @@ class KolaySpider(scrapy.Spider):
         try:
             rating_count = int(rating_count)
         except:
-            rating_count = rating_count
+            rating_count = 0
 
         general_rating = response.xpath("//div[@id='general_rating']/text()").extract_first()
 
         try:
             comment_count = re.findall(r'([\d+])\s?Yorum',general_rating)[0]
+            comment_count = int(comment_count)
         except:
             comment_count = 0
 
@@ -165,9 +214,9 @@ class KolaySpider(scrapy.Spider):
         female_services_sel_list =response.xpath("//div[@id='bayan-hizmetler']/div/div")
         male_services_sel_list = response.xpath("//div[@id='bay-hizmetler']/div/div")
         if female_services_sel_list:
-            services_gender_sel_dict.update({"Women": female_services_sel_list})
+            services_gender_sel_dict.update({"w": female_services_sel_list})
         if male_services_sel_list:
-            services_gender_sel_dict.update({"Men": male_services_sel_list})
+            services_gender_sel_dict.update({"m": male_services_sel_list})
 
         for gender_sel in services_gender_sel_dict:
             gender_sel_list = services_gender_sel_dict[gender_sel]

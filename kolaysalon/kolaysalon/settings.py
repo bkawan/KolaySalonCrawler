@@ -64,7 +64,7 @@ NEWSPIDER_MODULE = 'kolaysalon.spiders'
 ITEM_PIPELINES = {
    'kolaysalon.pipelines.KolaysalonPipeline': 300,
    'kolaysalon.pipelines.MysqlPipeline': 300,
-   'kolaysalon.pipelines.MyImagesPipeline': 1,
+   # 'kolaysalon.pipelines.MyImagesPipeline': 1,
     # 'scrapy.pipelines.images.ImagesPipeline': 100,
    # 'scrapy.pipelines.files.FilesPipeline' :1
 }
