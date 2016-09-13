@@ -1,6 +1,6 @@
 from django.db import models
 
-# from business.models import Business
+from businesses.models import Business
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -31,7 +31,7 @@ class BusinessServiceRel(models.Model):
 		    ('w', 'Women'),
                 )
 
-    # business = models.ForeignKey(Business)
+    business = models.ForeignKey(Business)
     service = models.ForeignKey(Service)
     gender = models.CharField(max_length=30)
     price = models.CharField(max_length=50)

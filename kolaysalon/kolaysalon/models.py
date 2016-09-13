@@ -63,6 +63,8 @@ class Business(DeclarativeBase):
     about = Column(TEXT)
     photos = Column(TEXT)
     professionals = Column(TEXT)
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    modified_at = Column(DateTime, onupdate=datetime.datetime.now)
 
 
 class Review(DeclarativeBase):
@@ -77,6 +79,8 @@ class Review(DeclarativeBase):
     rating_count = Column(INTEGER)
     comment_count = Column(INTEGER)
     business_id = Column(INTEGER, ForeignKey('businesses.id'))
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    modified_at = Column(DateTime, onupdate=datetime.datetime.now)
 
     business = relationship(
         Business,

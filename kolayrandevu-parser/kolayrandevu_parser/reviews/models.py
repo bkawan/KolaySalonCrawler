@@ -1,5 +1,5 @@
 from django.db import models
-# from kolayrandevu_parser.businesses.models import Business
+from businesses.models import Business
 class ReviewSummary(models.Model):
     # created_at = models.DateTimeField(
     #     auto_now_add=True, editable=False)
@@ -7,7 +7,7 @@ class ReviewSummary(models.Model):
     #     auto_now=True, editable=False)
 
 
-    # business = models.ForeignKey(Business)
+    business = models.ForeignKey(Business)
     rating_count = models.PositiveIntegerField(null=True, blank=True)
     comment_count = models.PositiveIntegerField(null=True, blank=True)
 
