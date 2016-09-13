@@ -33,8 +33,8 @@ class KolaySpider(scrapy.Spider):
 
 
         shop_name_sel_list = response.xpath("//select[@name='mekan']/option")
-        print (shop_name_sel_list)
-        shop_name_sel_list = shop_name_sel_list[1:3]
+        # print (shop_name_sel_list)
+        # shop_name_sel_list = shop_name_sel_list[1:3]
 
         for shop in shop_name_sel_list:
             shop_name_value = shop.xpath("./@value").extract_first().strip()
