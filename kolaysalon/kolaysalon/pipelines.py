@@ -157,7 +157,6 @@ class MysqlPipeline(object):
             business_service_rel = self.get_entity_dict_values(entity=BusinessServicesRel, item= business_service_rel_item)
 
             category_entity_exists = session.query(Category).filter_by(name=category['name']).first()
-            service_entity_exists = session.query(Service).filter_by(name=service['name']).first()
 
 
 
@@ -165,14 +164,22 @@ class MysqlPipeline(object):
 
                 service_entity = Service(category=category_entity_exists, **service)
                 session.add(service_entity)
+                session.add(
+                        BusinessServicesRel(service=service_entity, business=business_entity,
+                                            **business_service_rel))
+
+
 
             else:
                 category_entity = Category(**category)
                 service_entity = Service(category=category_entity, **service)
                 session.add(category_entity)
                 session.add(service_entity)
+                session.add(
+                    BusinessServicesRel(service=service_entity, business=business_entity,
+                                        **business_service_rel))
 
-            session.add(BusinessServicesRel(service=service_entity,business=business_entity,**business_service_rel))
+
 
         session.commit()
         session.close()
