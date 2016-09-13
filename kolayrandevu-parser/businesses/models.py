@@ -1,20 +1,31 @@
 from django.db import models
 
+
 class Business(models.Model):
-	created_at = models.DateTimeField(
-        auto_now_add=True, editable=False)
-    modified_at = models.DateTimeField(
-        auto_now=True, editable=False)
-	
-	kolayrandevu_url
-	name
-	logo
-	category
-	province
-	district
-	full_address
-	geoposition
-	working_hours #json
-	description
-	professionals #json for name list
-	franchise_branches #json for name and url
+
+	# created_at = models.DateTimeField(auto_now_add=True, editable=False)
+	# modified_at = models.DateTimeField(auto_now=True, editable=False)
+	kolayrandevu_url = models.CharField(max_lenght=255,null=True,blank=True)
+	name = models.CharField(max_lenght=255,null=True,blank=True)
+	logo = models.ImageField(null=True,blank=True)
+	category = models.CharField(max_lenght=255,null=True,blank=True)
+	province = models.CharField(max_lenght=255,null=True,blank=True)
+	district = models.CharField(max_lenght=255,null=True,blank=True)
+	full_address = models.CharField(max_lenght=255,null=True,blank=True)
+	geoposition = models.CharField(max_lenght=255,null=True,blank=True)
+	about = models.TextField(null=True,blank=True)
+
+
+	class Meta:
+		db_table = 'businesses'
+
+	def __unicode__(self):
+		return u"%s" % self.name
+
+
+
+
+	 #json
+	# description
+	# professionals #json for name list
+	# franchise_branches #json for name and url
