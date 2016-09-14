@@ -1,14 +1,15 @@
-from sqlalchemy import Column, ForeignKey,VARCHAR,INTEGER,String
+from sqlalchemy import Column, ForeignKey, VARCHAR, INTEGER, String
 
-from sqlalchemy.dialects.mssql import TEXT,TINYINT,VARCHAR,INTEGER
-from sqlalchemy.dialects.mysql import MEDIUMBLOB
+# from sqlalchemy.dialects.mssql import TEXT,TINYINT,VARCHAR,INTEGER
+from sqlalchemy.dialects.postgresql import BYTEA
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.interfaces import  MapperExtension
-from sqlalchemy import create_engine,DateTime
+# from sqlalchemy.orm import sessionmaker
+# from sqlalchemy.orm.interfaces import  MapperExtension
+from sqlalchemy import create_engine, DateTime
 import settings
 import datetime
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.engine.url import URL
 
 
 DeclarativeBase = declarative_base()
@@ -16,27 +17,26 @@ DeclarativeBase = declarative_base()
 
 def db_engine_connect():
 
-    connection_string = 'mysql+pymysql://{}:{}@{}/{}?charset=utf8'.format(
-        settings.MYSQL_USER,
-        settings.MYSQL_PASSWORD,
-        settings.MYSQL_HOST,
-        settings.MYSQL_DBNAME
-    )
+    # connection_string = 'mysql+pymysql://{}:{}@{}/{}?charset=utf8'.format(
+    #     settings.MYSQL_USER,
+    #     settings.MYSQL_PASSWORD,
+    #     settings.MYSQL_HOST,
+    #     settings.MYSQL_DBNAME
+    # )
 
-    # 'engine = create_engine('mysql+pymysql://root:root@127.0.0.1/kolay', echo=True)
+    # # 'engine = create_engine('mysql+pymysql://root:root@127.0.0.1/kolay', echo=True)
 
-    connection_engine = create_engine(connection_string, echo=True)
-
-    return connection_engine
+    # connection_engine = create_engine(connection_string, echo=True)
+    # return connection_engine
+    return create_engine(URL(**settings.DATABASE), echo=False)
 
 
 def create_tables(engine):
     DeclarativeBase.metadata.create_all(engine)
 
+
 def drop_tables(engine):
     DeclarativeBase.metadata.drop_all(engine)
-
-
 
 
 class Business(DeclarativeBase):
@@ -50,19 +50,19 @@ class Business(DeclarativeBase):
 
     """
 
-    id = Column(INTEGER, primary_key=True)
+    id = Column(INTEGER, primary_key=True, unique=True)
     shop_name_value = Column(VARCHAR(255), primary_key=True)
     kolayrandevu_url = Column(VARCHAR(255))
     name = Column(VARCHAR(255))
-    logo = Column(MEDIUMBLOB)
+    logo = Column(BYTEA)
     province = Column(VARCHAR(255))
     district = Column(VARCHAR(255))
     full_address = Column(VARCHAR(255))
     geoposition = Column(VARCHAR(255))
     working_hours = Column(VARCHAR(255))
-    about = Column(TEXT)
-    photos = Column(TEXT)
-    professionals = Column(TEXT)
+    about = Column(String)
+    photos = Column(String)
+    professionals = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.now)
     modified_at = Column(DateTime, onupdate=datetime.datetime.now)
 
@@ -99,7 +99,7 @@ class Category(DeclarativeBase):
     }
 
     id = Column(INTEGER, primary_key=True)
-    name = Column(VARCHAR(255),unique=True)
+    name = Column(VARCHAR(255), unique=True)
 
 
 class Service(DeclarativeBase):
@@ -123,7 +123,6 @@ class Service(DeclarativeBase):
                         cascade='delete,all'))
 
 
-
 class BusinessServicesRel(DeclarativeBase):
     """Service Entity Class"""
     __tablename__ = 'business_services_rels'
@@ -131,8 +130,6 @@ class BusinessServicesRel(DeclarativeBase):
         'mysql_engine': 'InnoDB',
         'mysql_charset': 'utf8'
     }
-
-
 
     id = Column(INTEGER, primary_key=True)
     gender = Column(VARCHAR(255))
@@ -152,21 +149,3 @@ class BusinessServicesRel(DeclarativeBase):
         backref=backref('service_rel',
                         uselist=True,
                         cascade='delete,all'))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

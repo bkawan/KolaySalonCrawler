@@ -79,17 +79,16 @@ WSGI_APPLICATION = 'kolayrandevu_parser.wsgi.application'
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {
-
-
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'kolay',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        # 'PORT': '5432',
+        'USER': 'santosh',
+        'PASSWORD': 'mirage',
+        # 'USER': 'dogukan',
+        # 'PASSWORD': 'dogukan',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
-
 }
 
 

@@ -62,11 +62,10 @@ NEWSPIDER_MODULE = 'kolaysalon.spiders'
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'kolaysalon.pipelines.KolaysalonPipeline': 300,
+   # 'kolaysalon.pipelines.KolaysalonPipeline': 300,
    'kolaysalon.pipelines.MysqlPipeline': 300,
-   'kolaysalon.pipelines.MyImagesPipeline': 1,
+   'kolaysalon.pipelines.MyImagesPipeline': 300,
     # 'scrapy.pipelines.images.ImagesPipeline': 100,
-   # 'scrapy.pipelines.files.FilesPipeline' :1
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -92,7 +91,19 @@ IMAGES_STORE = 'images/'
 # FILE_STORAGE = '/Users/BIKESHKAWAN/Development/phunka/GitHub/KolaySalonCrawler/kolaysalon/'
 
 
-MYSQL_HOST = 'localhost'
-MYSQL_DBNAME = 'kolay'
-MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'root'
+# MYSQL_HOST = 'localhost'
+# MYSQL_DBNAME = 'kolay'
+# MYSQL_USER = 'root'
+# MYSQL_PASSWORD = 'root'
+
+
+DATABASE = {
+        'drivername' : 'postgres',
+        'host' : 'localhost',
+        'port' : '5432',
+        # 'username' : 'dogukan',
+        # 'password' : 'dogukan',
+        'username' : 'santosh',
+        'password' : 'mirage',
+        'database' : 'kolay'
+}

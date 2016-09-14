@@ -28,24 +28,24 @@ from models import db_engine_connect, DeclarativeBase,drop_tables,create_tables,
 from sqlalchemy.orm import  sessionmaker
 
 
-class KolaysalonPipeline(object):
+# class KolaysalonPipeline(object):
 
-    def __init__(self):
-        pass
-    #
-    #     self.file  = codecs.open('data.json', 'w', encoding='utf-8')
-    #     # sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
-    #     # reload(sys)
-    #     #
-    #     # sys.setdefaultencoding('utf-8')
-    #
-    # def process_item(self, item, spider):
-    #
-    #     line = json.dumps(dict(item), ensure_ascii=False) + "\n"
-    #
-    #     self.file.write(line)
-    #
-    #     return item
+#     def __init__(self):
+#         pass
+#     #
+#     #     self.file  = codecs.open('data.json', 'w', encoding='utf-8')
+#     #     # sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+#     #     # reload(sys)
+#     #     #
+#     #     # sys.setdefaultencoding('utf-8')
+#     #
+#     # def process_item(self, item, spider):
+#     #
+#     #     line = json.dumps(dict(item), ensure_ascii=False) + "\n"
+#     #
+#     #     self.file.write(line)
+#     #
+#     #     return item
 
 class MyImagesPipeline(ImagesPipeline):
 
@@ -158,8 +158,6 @@ class MysqlPipeline(object):
             category_item = service_dict['category']
             business_service_rel_item = service_dict['business_service_rel']
 
-
-
             category = self.get_entity_dict_values(entity=Category, item=category_item)
             service = self.get_entity_dict_values(entity=Service, item=service_item)
             business_service_rel = self.get_entity_dict_values(entity=BusinessServicesRel, item= business_service_rel_item)
@@ -203,11 +201,11 @@ class MysqlPipeline(object):
         except:
             pass
 
-        try:
-            attrs_list.remove('created_at')
-            attrs_list.remove('modified_at')
-        except:
-            pass
+        # try:
+        #     attrs_list.remove('created_at')
+        #     attrs_list.remove('modified_at')
+        # except:
+        #     pass
 
         entity_dict_values = {}
 
