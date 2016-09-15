@@ -28,6 +28,7 @@ def db_engine_connect():
 
     # connection_engine = create_engine(connection_string, echo=True)
     # return connection_engine
+
     return create_engine(URL(**settings.DATABASE), echo=False)
 
 
@@ -54,7 +55,7 @@ class Business(DeclarativeBase):
     shop_name_value = Column(VARCHAR(255), primary_key=True)
     kolayrandevu_url = Column(VARCHAR(255))
     name = Column(VARCHAR(255))
-    logo = Column(BYTEA)
+    logo = Column(VARCHAR(1000))
     province = Column(VARCHAR(255))
     district = Column(VARCHAR(255))
     full_address = Column(VARCHAR(255))
@@ -137,7 +138,7 @@ class BusinessServicesRel(DeclarativeBase):
     service_id = Column(INTEGER, ForeignKey('services.id'))
     price = Column(VARCHAR(255))
     created_at = Column(DateTime, default=datetime.datetime.now)
-    modified_at = Column(DateTime, onupdate=datetime.datetime.now)
+    modified_at = Column(DateTime, onupdate=datetime.datetime.now,nullable=True)
 
     business = relationship(
         Business,

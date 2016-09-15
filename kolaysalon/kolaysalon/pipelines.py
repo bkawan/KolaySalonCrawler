@@ -10,6 +10,8 @@ from scrapy.pipelines.images import ImagesPipeline
 import codecs
 import locale
 import sys
+from time import gmtime, strftime
+
 from subprocess import Popen,PIPE,STDOUT
 import urllib2
 from sqlalchemy.exc import IntegrityError
@@ -50,14 +52,28 @@ from sqlalchemy.orm import  sessionmaker
 class MyImagesPipeline(ImagesPipeline):
 
     def get_media_requests(self, item, info):
-
+        #
+        # item = [x for x in item['image_urls'] if 'kr-s0/' in x]
+        #
+        # for image_url in item:
+        #     yield Request(image_url)
         for image_url in item['image_urls']:
-            yield Request(image_url)
+                    yield Request(image_url)
 
     # stuffs to do after the request is completed
     def item_completed(self, results, item, info):
         path = None
+        # print("***********")
+        # print(results)
+        #
+        # print("***********")
+
         for result in [x for ok, x in results if ok]:
+
+            print("***********")
+            print(result['url'])
+
+            print("***********")
             try:
                 print("="*30)
                 # original path
@@ -70,17 +86,27 @@ class MyImagesPipeline(ImagesPipeline):
                 # new folder name according to shop_name_value
                 my_path = str(item['kolay']['business']['shop_name_value'])
 
-                # new path according to id
+
+
+
                 new_path = os.path.join(storage, my_path)
 
                 # filename
                 filename = os.path.basename(path)
+
+                print("++++++++++++++")
+                # print(filename)
+                print("++++++++++++++")
 
                 # path to original image
                 path = os.path.join(storage, path)
 
                 # new path
                 target_path = os.path.join(storage, my_path)
+
+                # new path according to id
+                if 'kr-s0/' in result['url']:
+                    target_path = os.path.join(target_path, "logo")
 
                 item['image_local_path'] = target_path
 
@@ -124,13 +150,13 @@ class MysqlPipeline(object):
     def insert(self, item):
         business_item = item['kolay']['business']
 
-        try:
-            logo_url = item['kolay']['business']['logo']
-            opener = urllib2.build_opener()
-            image = opener.open(logo_url)
-            logo = image.read()
-        except:
-            logo = None
+        # try:
+        #     logo_url = item['kolay']['business']['logo']
+        #     opener = urllib2.build_opener()
+        #     image = opener.open(logo_url)
+        #     logo = image.read()
+        # except:
+        #     logo = None
 
 
         review_item = item['kolay']['reviews']
@@ -144,10 +170,10 @@ class MysqlPipeline(object):
         business = self.get_entity_dict_values(entity=Business, item=business_item)
         review = self.get_entity_dict_values(entity=Review, item=review_item)
 
-        if logo:
-            business_entity = Business(logo=logo, **business)
-        else:
-            business_entity = Business(**business)
+        # if logo:
+        #     business_entity = Business(logo=logo, **business)
+        # else:
+        business_entity = Business(**business)
 
         session.add(business_entity)
         session.add(Review(business=business_entity, **review))
@@ -196,10 +222,10 @@ class MysqlPipeline(object):
         attrs_list = mapper.mapper.column_attrs.keys()
         attrs_list.remove('id')
 
-        try:
-            attrs_list.remove('logo')
-        except:
-            pass
+        # try:
+        #     attrs_list.remove('logo')
+        # except:
+        #     pass
 
         # try:
         #     attrs_list.remove('created_at')
@@ -236,7 +262,10 @@ class MysqlPipeline(object):
                         },
                         'business_service_rel': {
                             'gender': gender,
-                            'price': price
+                            'price': price,
+                             "created_at":strftime("%Y-%m-%d %H:%M:%S"),
+                             "modified_at":strftime("%Y-%m-%d %H:%M:%S"),
+
                         }
                     }
 

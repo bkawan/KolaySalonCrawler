@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from businesses.models import Business
 from django.utils.encoding import force_unicode
@@ -8,6 +9,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
 
     class Meta:
+        verbose_name_plural = _("Categories")
         db_table = 'categories'
 
     def __unicode__(self):

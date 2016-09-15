@@ -87,7 +87,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES=[]
 #HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-IMAGES_STORE = 'images/'
+IMAGES_STORE = '../images/'
 # FILE_STORAGE = '/Users/BIKESHKAWAN/Development/phunka/GitHub/KolaySalonCrawler/kolaysalon/'
 
 
@@ -103,7 +103,7 @@ DATABASE = {
         'port' : '5432',
         # 'username' : 'dogukan',
         # 'password' : 'dogukan',
-        'username' : 'santosh',
-        'password' : 'mirage',
+        'username' : '',
+        'password' : '',
         'database' : 'kolay'
 }

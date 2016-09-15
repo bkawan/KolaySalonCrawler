@@ -8,6 +8,9 @@ import codecs
 from kolaysalon.items import KolaysalonItem
 import json
 
+from time import gmtime, strftime
+
+import datetime
 
 class KolaySpider(scrapy.Spider):
     name = "kolay"
@@ -153,13 +156,16 @@ class KolaySpider(scrapy.Spider):
         # logo_url = response.xpath("//img[@itemprop='logo']/@src").extract_first()
         try:
             logo_url = response.xpath("//img[@itemprop='logo']/@src").extract_first()
+            logo_url = response.xpath("//img[@itemprop='logo']/@src").extract_first()
         except:
-            logo_url = " "
+            logo_url = ""
 
         try:
 
             thumbnail_photos_link_list = response.xpath("//img[@class='sp-thumbnail']/@src").extract()
             photos_link_list = [str(x.replace('kr-s0','kr-s2')) for x in thumbnail_photos_link_list]
+            if logo_url:
+                photos_link_list.append(logo_url)
         except:
             photos_link_list = " "
 
@@ -184,7 +190,11 @@ class KolaySpider(scrapy.Spider):
             # 'franchise_branches': 'franchise_branches',
             "about": about,
             "photos": photos_link_list,
-            "shop_name_value": shop_name_value
+            "shop_name_value": shop_name_value,
+            "created_at":strftime("%Y-%m-%d %H:%M:%S"),
+            # "created_at":datetime.datetime.now(),
+            "modified_at":strftime("%Y-%m-%d %H:%M:%S")
+
 
 
         }
@@ -205,11 +215,16 @@ class KolaySpider(scrapy.Spider):
 
         reviews_dict = {
             "rating_count": rating_count,
-            "comment_count": comment_count
+            "comment_count": comment_count,
+             "created_at":strftime("%Y-%m-%d %H:%M:%S"),
+            "modified_at":strftime("%Y-%m-%d %H:%M:%S")
 
         }
 
-        services_dict = {}
+        services_dict = {
+
+
+        }
         services_gender_sel_dict = {}
         female_services_sel_list =response.xpath("//div[@id='bayan-hizmetler']/div/div")
         male_services_sel_list = response.xpath("//div[@id='bay-hizmetler']/div/div")
